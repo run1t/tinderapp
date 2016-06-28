@@ -1,10 +1,11 @@
+'use strict';
 const router = require('express').Router(); // eslint-disable-line new-cap
 const tinder = require('tinder');
 const client = new tinder.TinderClient();
 const CONFIG = require('./config.js');
+let token;
 
 const tinderauth = (req, res, next) => {
-  const token = CONFIG.xauth;
   client.setAuthToken(token);
   if (client.isAuthorized()) {
     next();
@@ -18,6 +19,7 @@ const tinderauth = (req, res, next) => {
 */
 router.get('/tinder/auth', (req, res) => {
   client.authorize(CONFIG.token, CONFIG.profileid, (err, authed) => {
+    token = client.getAuthToken();
     if (err) res.json(err);
     else res.json(authed);
   });
